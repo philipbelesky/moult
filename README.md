@@ -1,6 +1,6 @@
 # Moult
 
-A script to extract the contents of Python, VB, and C# components within [Grasshopper](http://www.grasshopper3d.com/) and writes them to a file.
+A script that extracts the contents of Python, VB, and C# components within [Grasshopper](http://www.grasshopper3d.com/) and writes them to files.
 
 I'm not sure what this is useful for. Personally I find it useful because it means (when combined with version control) that I can use a diff tool to compare between different revisions to a script inside a component.
 
