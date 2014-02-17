@@ -8,8 +8,8 @@ I'm not sure what this is useful for. Personally I find it useful because it mea
 
 You'll need Python installed in order to use this. You'll then need to open up a shell, navigate to where your Grasshopper files are, and then execute the script. Like so:
 
-    $ cd "c:/Grasshopper Project/"
-    $ python "c:/Script Location/moult.py"
+    $ cd "c:\Grasshopper Project\"
+    $ python "c:\Script Location\moult.py"
 
 ## Usage
 
