@@ -1,8 +1,6 @@
 ﻿from xml.etree.ElementTree import ElementTree
 import os
 
-directory = os.getcwd()
-
 def ProcessGHXFile(file_path):
     the_file = open(file_path)
     the_directory = os.path.dirname(file_location)
@@ -29,6 +27,7 @@ def DebugMessage(inst, language, script_nickname):
 def IsolateTheScript(the_tree, the_directory):
     # Traverse the XML tree to find instances of script components
 
+    global total_components
     for element in the_tree.iterfind('.//*[@name="Object"]'):
         # Find the primary nodes, then trawl down to check if they are scripts
         script_type = element.find('.//*item[@name="Name"].[@type_name="gh_string"]')
@@ -36,6 +35,7 @@ def IsolateTheScript(the_tree, the_directory):
 
         if script_type.text == "Python Script":
             script_contents = element.find('.//*item[@name="CodeInput"].[@type_name="gh_string"]')
+            total_components += 1
             try:
                 WriteOutScript(the_directory, script_nickname.text, "py", script_contents.text)
             except Exception as inst:
@@ -43,6 +43,7 @@ def IsolateTheScript(the_tree, the_directory):
 
         if script_type.text == "VB Script":
             script_contents = element.find('.//*item[@name="AdditionalSource"].[@type_name="gh_string"]')
+            total_components += 1
             try:
                 WriteOutScript(the_directory, script_nickname.text, "vb", script_contents.text)
             except Exception as inst:
@@ -50,15 +51,22 @@ def IsolateTheScript(the_tree, the_directory):
 
         if script_type.text == "C# Script":
             script_contents = element.find('.//*item[@name="AdditionalSource"].[@type_name="gh_string"]')
+            total_components += 1
             try:
                 WriteOutScript(the_directory, script_nickname.text, "cs", script_contents.text)
             except Exception as inst:
                 DebugMessage(inst, "C++", script_nickname)
 
 
+directory = os.getcwd()
+total_components = 0
+total_definitions = 0
+
 for r,d,f in os.walk(directory):
     for the_file in f:
         if the_file.endswith(".ghx"):
+            total_definitions +=1
             file_location = os.path.join(r,the_file)
             ProcessGHXFile(file_location)
 
+print "Extracted %i script components from %i files" % (total_components, total_definitions)
