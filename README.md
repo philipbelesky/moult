@@ -2,11 +2,11 @@
 
 A script to extract the contents of Python, VB, and C# components within [Grasshopper](http://www.grasshopper3d.com/) and writes them to a file.
 
-I'm not sure what this is useful for. Personally I find it useful because it means (when combined with version control) that I can use a diff tool to compare between different revisions to a script. It also makes Github repo's full of Grasshopper files look a bit more lively.
+I'm not sure what this is useful for. Personally I find it useful because it means (when combined with version control) that I can use a diff tool to compare between different revisions to a script inside a component.
 
 ## Installation
 
-You'll need Python installed in order to use this. You'll then need to open up a shell, navigate to where your Grasshopper files are, and then execute the script. Like so:
+You'll need Python installed in order to use this. You'll then need to open up a shell, navigate to where your Grasshopper files are, and then execute the script. As an example:
 
     $ cd "c:\Grasshopper Project\"
     $ python "c:\Script Location\moult.py"
