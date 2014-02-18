@@ -15,7 +15,7 @@ You'll need Python installed in order to use this. You'll then need to open up a
 
 If you execute the file it will traverse down all the folders within the directory it is placed. Each time it encounters a **GHX** file it will extract its the scripts and write them to a file in the same directory tree.
 
-*Note that this only works when your Grasshopper files as saved in the **GHX** format*
+*Note that this only works when your Grasshopper files as saved in the GHX format*
 
 *Note that the filenames of each file come from the name you give the component. So they'll need to be unique within each definition and between different definitions within the same directory*
 
