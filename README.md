@@ -19,3 +19,5 @@ If you execute the file it will traverse down all the folders within the directo
 
 *Note that the filenames of each file come from the name you give the component. So they'll need to be unique within each definition and between different definitions within the same directory*
 
+*Note that by default this script deletes all files starting with exscript*
+

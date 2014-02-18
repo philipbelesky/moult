@@ -1,61 +1,77 @@
 ﻿from xml.etree.ElementTree import ElementTree
 import os
 
-def ProcessGHXFile(file_path):
-    the_file = open(file_path)
-    the_directory = os.path.dirname(file_location)
+def ProcessGHXFile(definition_path):
+    # Loads the file and sets up the XML parser
+    the_file = open(definition_path)
+    the_directory = os.path.dirname(definition_path)
+    the_filename = os.path.basename(definition_path)
+    base_filename = os.path.splitext(the_filename)[0]
     the_tree = ElementTree()
     the_tree.parse(the_file)
-    IsolateTheScript(the_tree, the_directory)
+    IsolateTheScript(the_tree, the_directory, base_filename)
     the_file.close()
 
 
-def WriteOutScript(the_directory, name, extension, contents):
-    filename = "%s.%s" % (name, extension)
-    filename = os.path.join(the_directory, filename)
+def WriteOutScript(target_directory, name, extension, contents, script_guid, definition_filename):
+    # Name and writing each component's file
+    filename = "%s___%s___%s.%s" % (definition_filename, name, script_guid[:4],  extension)
+    filename = os.path.join(target_directory, filename)
     script = open(filename, 'w')
     script.write(contents)
-    script.close()
-
-def DebugMessage(inst, language, script_nickname):
-    print "\n EXCEPION:"
-    print type(inst)
-    print inst.args
-    print inst
-    print "problem with writing %s script named %s" % (language, script_nickname)
-
-def IsolateTheScript(the_tree, the_directory):
-    # Traverse the XML tree to find instances of script components
-
+    script.close
     global total_components
+    total_components += 1
+
+
+def DebugMessage(inst, script_type, the_directory, script_nickname, extension, script_content, script_guid, definition_filename):
+    # Debug printouts. Probably not needed anymore
+    print "EXCEPION: %s" % type(inst)
+    print "name is \t\t%s" % script_nickname
+    print "language is \t\t%s" % script_type
+    print "contents are \t\t%s" % script_content[:10]
+    print "guid is \t\t%s" % script_guid
+    print "\n"
+
+
+
+def IsolateTheScript(the_tree, the_directory, definition_filename):
+    # Traversing the XML tree to find code elements
     for element in the_tree.iterfind('.//*[@name="Object"]'):
         # Find the primary nodes, then trawl down to check if they are scripts
-        script_type = element.find('.//*item[@name="Name"].[@type_name="gh_string"]')
-        script_nickname = element.find('.//*item[@name="NickName"].[@type_name="gh_string"]')
+        script_type = element.find('.//*item[@name="Name"].[@type_name="gh_string"]').text
+        script_nickname = element.find('.//*item[@name="NickName"].[@type_name="gh_string"]').text
+        script_guid = element.find('.//*item[@name="InstanceGuid"].[@type_name="gh_guid"]').text
 
-        if script_type.text == "Python Script":
-            script_contents = element.find('.//*item[@name="CodeInput"].[@type_name="gh_string"]')
-            total_components += 1
+        extension = None
+        if script_type == "Python Script":
+            extension = "py"
             try:
-                WriteOutScript(the_directory, script_nickname.text, "py", script_contents.text)
-            except Exception as inst:
-                DebugMessage(inst, "python", script_nickname)
+                script_content = element.find('.//*item[@name="CodeInput"].[@type_name="gh_string"]').text
+            except:
+                script_content = None
 
-        if script_type.text == "VB Script":
-            script_contents = element.find('.//*item[@name="AdditionalSource"].[@type_name="gh_string"]')
-            total_components += 1
+        if script_type == "VB Script":
+            extension = "vb"
             try:
-                WriteOutScript(the_directory, script_nickname.text, "vb", script_contents.text)
-            except Exception as inst:
-                DebugMessage(inst, "VB", script_nickname)
+                script_content = element.find('.//*item[@name="AdditionalSource"].[@type_name="gh_string"]').text
+            except:
+                script_content = None
 
-        if script_type.text == "C# Script":
-            script_contents = element.find('.//*item[@name="AdditionalSource"].[@type_name="gh_string"]')
-            total_components += 1
+        if script_type == "C# Script":
+            extension = "cs"
             try:
-                WriteOutScript(the_directory, script_nickname.text, "cs", script_contents.text)
+                script_content = element.find('.//*item[@name="AdditionalSource"].[@type_name="gh_string"]').text
+            except:
+                script_content = None
+
+        # The crawler has issues if the component contains no code yet, hence all the exceptions and None checking
+        if (extension is not None and script_content is not None):
+            try:
+                WriteOutScript(the_directory, script_nickname, extension, script_content, script_guid, definition_filename)
             except Exception as inst:
-                DebugMessage(inst, "C++", script_nickname)
+                DebugMessage(inst, script_type, the_directory, script_nickname, extension, script_content, script_guid, definition_filename)
+
 
 
 directory = os.getcwd()
