@@ -1,12 +1,10 @@
 ﻿from xml.etree.ElementTree import ElementTree
 import os
 
-def ProcessGHXFile(definition_path):
+def ProcessGHXFile(definition_path, base_filename):
     # Loads the file and sets up the XML parser
     the_file = open(definition_path)
     the_directory = os.path.dirname(definition_path)
-    the_filename = os.path.basename(definition_path)
-    base_filename = os.path.splitext(the_filename)[0]
     the_tree = ElementTree()
     the_tree.parse(the_file)
     IsolateTheScript(the_tree, the_directory, base_filename)
@@ -78,11 +76,20 @@ directory = os.getcwd()
 total_components = 0
 total_definitions = 0
 
-for r,d,f in os.walk(directory):
-    for the_file in f:
+for path, subdirs, files in os.walk(directory):
+    for the_file in files:
         if the_file.endswith(".ghx"):
             total_definitions +=1
-            file_location = os.path.join(r,the_file)
-            ProcessGHXFile(file_location)
+            file_location = os.path.join(path,the_file)
+            the_filename = os.path.basename(the_file)
+            base_filename = os.path.splitext(the_filename)[0]
+
+            # deleting old versions of the file (ie removed components)
+            sibling_files = [s for s in os.listdir(path) if os.path.isfile(s)]
+            for s in sibling_files:
+                if s.startswith(base_filename  + "___") and (s.endswith(".py") or s.endswith(".cs") or s.endswith(".vb")):
+                     os.remove(s)
+
+            ProcessGHXFile(file_location, base_filename)
 
 print "Extracted %i script components from %i files" % (total_components, total_definitions)
