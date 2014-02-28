@@ -32,7 +32,6 @@ def DebugMessage(inst, script_type, the_directory, script_nickname, extension, s
     print "\n"
 
 
-
 def IsolateTheScript(the_tree, the_directory, definition_filename):
     # Traversing the XML tree to find code elements
     for element in the_tree.iterfind('.//*[@name="Object"]'):
@@ -69,6 +68,7 @@ def IsolateTheScript(the_tree, the_directory, definition_filename):
                 WriteOutScript(the_directory, script_nickname, extension, script_content, script_guid, definition_filename)
             except Exception as inst:
                 DebugMessage(inst, script_type, the_directory, script_nickname, extension, script_content, script_guid, definition_filename)
+
 
 
 
