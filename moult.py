@@ -78,7 +78,8 @@ total_definitions = 0
 
 for path, subdirs, files in os.walk(directory):
     for the_file in files:
-        if the_file.endswith(".ghx"):
+        # Matching grasshopper definitions, but excluding backup files
+        if the_file.endswith(".ghx") and not the_file.endswith("].ghx"):
             total_definitions +=1
             file_location = os.path.join(path,the_file)
             the_filename = os.path.basename(the_file)
